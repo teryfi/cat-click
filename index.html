@@ -1597,31 +1597,6 @@
             }, 5000);
         }
 
-        // Добавляем чит-код для тестирования
-        window.addEventListener('keydown', (e) => {
-            console.log('Нажата клавиша:', e.key, 'Shift:', e.shiftKey);
-            
-            if (e.key.toLowerCase() === 'g' && e.shiftKey) {
-                clicks += 1000000;
-                console.log('Чит-код активирован! +1,000,000 кликов');
-                updateUI();
-            }
-        });
-
-        // Альтернативный способ - кнопка в интерфейсе
-        const cheatButton = document.createElement('button');
-        cheatButton.textContent = 'Чит-код (Shift+G)';
-        cheatButton.style.position = 'fixed';
-        cheatButton.style.top = '10px';
-        cheatButton.style.right = '10px';
-        cheatButton.style.zIndex = '9999';
-        cheatButton.onclick = () => {
-            clicks += 1000000;
-            console.log('Чит-код активирован через кнопку! +1,000,000 кликов');
-            updateUI();
-        };
-        document.body.appendChild(cheatButton);
-
         // Система пассивного дохода
         setInterval(() => {
             let totalIncome = 0;
