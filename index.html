@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кото-кликер 2.0</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Digital&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="start-screen">
+        <h1>Кото-кликер 2.0</h1>
+        <p>Глубокий кликер с элементами стратегии и абсурда</p>
+        <button class="start-button">Начать игру</button>
+    </div>
+
+    <div class="game-container" style="display: none;">
+        <header>
+            <div class="counter">0</div>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Мутации</h3>
+                    <p class="mutation-points">0/100</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Доход</h3>
+                    <p class="kingdom-income">0/сек</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Накоплено</h3>
+                    <p class="stored-clicks">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Время</h3>
+                    <p class="time-cycle">Ночь</p>
+                </div>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="upgrades">Улучшения</button>
+            <button class="tab-btn" data-tab="mutations">Мутации</button>
+            <button class="tab-btn" data-tab="kingdoms">Королевства</button>
+            <button class="tab-btn" data-tab="companions">Компаньоны</button>
+            <button class="tab-btn" data-tab="quests">Квесты</button>
+            <button class="tab-btn" data-tab="dimensions">Измерения</button>
+            <button class="tab-btn" data-tab="magic">Магия</button>
+            <button class="tab-btn" data-tab="evolution">Эволюция</button>
+            <button class="tab-btn" data-tab="business">Бизнес</button>
+            <button class="tab-btn" data-tab="wars">Войны</button>
+        </nav>
+
+        <img src="assets/cat.png" alt="Кот" class="cat-image">
+
+        <div class="tab-content active" id="upgrades">
+            <div class="upgrade-card" data-type="laser" data-base-cost="50">
+                <h3>Лазерная указка</h3>
+                <p>Удваивает клики</p>
+                <p class="upgrade-price">50 кликов</p>
+                <button class="upgrade-btn">Купить</button>
+            </div>
+            <div class="upgrade-card" data-type="feeder" data-base-cost="200">
+                <h3>Автокормушка</h3>
+                <p>Автоматически кликает 1 раз в секунду</p>
+                <p class="upgrade-price">200 кликов</p>
+                <button class="upgrade-btn">Купить</button>
+            </div>
+            <div class="upgrade-card" data-type="trainer" data-base-cost="500">
+                <h3>Тренер</h3>
+                <p>Удваивает клики</p>
+                <p class="upgrade-price">500 кликов</p>
+                <button class="upgrade-btn">Купить</button>
+            </div>
+            <div class="upgrade-card" data-type="robot" data-base-cost="1000">
+                <h3>Робот-кот</h3>
+                <p>Автоматически кликает 5 раз в секунду</p>
+                <p class="upgrade-price">1000 кликов</p>
+                <button class="upgrade-btn">Купить</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="mutations">
+            <div class="mutations-container"></div>
+        </div>
+
+        <div class="tab-content" id="kingdoms">
+            <div class="kingdoms-container"></div>
+        </div>
+
+        <div class="tab-content" id="companions">
+            <div class="companions-container"></div>
+        </div>
+
+        <div class="tab-content" id="quests">
+            <div class="quests-container">
+                <h2>Квесты</h2>
+                <p class="quests-description">Выполняйте задания, чтобы получать награды!</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="dimensions">
+            <div class="dimensions-container"></div>
+        </div>
+
+        <div class="tab-content" id="magic">
+            <div class="magic-container"></div>
+        </div>
+
+        <div class="tab-content" id="evolution">
+            <div class="evolution-container"></div>
+        </div>
+
+        <div class="tab-content" id="business">
+            <div class="business-container"></div>
+        </div>
+
+        <div class="tab-content" id="wars">
+            <div class="wars-container"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Мутации
+        const mutations = {
+            'speed': {
+                name: 'Скорость',
+                description: 'Увеличивает скорость кликов на 25% на 5 минут',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Скорость" активирована! Множитель:', multiplier * 1.25);
+                    return {
+                        clicks: clicks * 1.25,
+                        autoClicks: autoClicks,
+                        multiplier: multiplier * 1.25
+                    };
+                }
+            },
+            'power': {
+                name: 'Сила',
+                description: 'Увеличивает силу кликов на 50% на 5 минут',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Сила" активирована! Множитель:', multiplier * 1.5);
+                    return {
+                        clicks: clicks * 1.5,
+                        autoClicks: autoClicks,
+                        multiplier: multiplier * 1.5
+                    };
+                }
+            },
+            'auto': {
+                name: 'Автоматизация',
+                description: 'Увеличивает автоклики на 25% на 5 минут',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Автоматизация" активирована! Автоклики:', autoClicks * 1.25);
+                    return {
+                        clicks: clicks,
+                        autoClicks: autoClicks * 1.25,
+                        multiplier: multiplier
+                    };
+                }
+            },
+            'time_warp': {
+                name: 'Искажение времени',
+                description: 'Ускоряет все процессы на 30% на 3 минуты',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Искажение времени" активирована!');
+                    return {
+                        clicks: clicks * 1.3,
+                        autoClicks: autoClicks * 1.3,
+                        multiplier: multiplier * 1.3
+                    };
+                }
+            },
+            'quantum': {
+                name: 'Квантовый кот',
+                description: 'Шанс 20% получить двойной клик на 4 минуты',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Квантовый кот" активирована!');
+                    if (Math.random() < 0.2) {
+                        return {
+                            clicks: clicks * 2,
+                            autoClicks: autoClicks,
+                            multiplier: multiplier
+                        };
+                    }
+                    return { clicks, autoClicks, multiplier };
+                }
+            },
+            'vampire': {
+                name: 'Вампир',
+                description: 'Восстанавливает 10% от каждого клика на 5 минут',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Вампир" активирована!');
+                    return {
+                        clicks: clicks * 1.1,
+                        autoClicks: autoClicks,
+                        multiplier: multiplier
+                    };
+                }
+            },
+            'chaos': {
+                name: 'Хаос',
+                description: 'Случайный множитель от 0.5x до 3x на 2 минуты',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    const randomMultiplier = 0.5 + Math.random() * 2.5;
+                    console.log('Мутация "Хаос" активирована! Множитель:', randomMultiplier);
+                    return {
+                        clicks: clicks * randomMultiplier,
+                        autoClicks: autoClicks,
+                        multiplier: multiplier
+                    };
+                }
+            },
+            'lucky': {
+                name: 'Удача',
+                description: 'Шанс 15% получить тройной клик на 4 минуты',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Удача" активирована!');
+                    if (Math.random() < 0.15) {
+                        return {
+                            clicks: clicks * 3,
+                            autoClicks: autoClicks,
+                            multiplier: multiplier
+                        };
+                    }
+                    return { clicks, autoClicks, multiplier };
+                }
+            },
+            'storm': {
+                name: 'Шторм',
+                description: 'Увеличивает все клики на 40% на 3 минуты',
+                effect: (clicks, autoClicks, totalClicks, lastClickValue, multiplier) => {
+                    console.log('Мутация "Шторм" активирована!');
+                    return {
+                        clicks: clicks * 1.4,
+                        autoClicks: autoClicks * 1.4,
+                        multiplier: multiplier * 1.4
+                    };
+                }
+            }
+        };
+
+        const MUTATION_DURATION = {
+            'speed': 5 * 60 * 1000,
+            'power': 5 * 60 * 1000,
+            'auto': 5 * 60 * 1000,
+            'time_warp': 3 * 60 * 1000,
+            'quantum': 4 * 60 * 1000,
+            'vampire': 5 * 60 * 1000,
+            'chaos': 2 * 60 * 1000,
+            'lucky': 4 * 60 * 1000,
+            'storm': 3 * 60 * 1000
+        };
+
+        let activeMutations = [];
+        const BASE_MUTATION_COST = 500; // Первая мутация после 500 кликов
+        const MUTATION_COST_INCREMENT = 1000; // Каждая следующая мутация дороже на 1000 кликов
+
+        function getNextMutationCost() {
+            return BASE_MUTATION_COST + (activeMutations.length * MUTATION_COST_INCREMENT);
+        }
+
+        function getRandomMutation() {
+            const availableMutations = Object.keys(mutations).filter(mutation => !activeMutations.some(m => m.name === mutation));
+            if (availableMutations.length === 0) return null;
+            return availableMutations[Math.floor(Math.random() * availableMutations.length)];
+        }
+
+        function activateMutation(mutation) {
+            if (!activeMutations.some(m => m.name === mutation)) {
+                activeMutations.push({
+                    name: mutation,
+                    startTime: Date.now(),
+                    endTime: Date.now() + MUTATION_DURATION[mutation]
+                });
+                
+                setTimeout(() => {
+                    deactivateMutation(mutation);
+                    updateMutationsUI();
+                }, MUTATION_DURATION[mutation]);
+            }
+        }
+
+        function deactivateMutation(mutation) {
+            activeMutations = activeMutations.filter(m => m.name !== mutation);
+        }
+
+        function checkMutationEffects(clicks, autoClicks, totalClicks, lastClickValue, multiplier) {
+            let result = {
+                clicks: clicks,
+                autoClicks: autoClicks,
+                multiplier: multiplier
+            };
+
+            activeMutations.forEach(mutation => {
+                console.log('Проверяем мутацию:', mutation.name);
+                const effect = mutations[mutation.name].effect(clicks, autoClicks, totalClicks, lastClickValue, multiplier);
+                result.clicks = effect.clicks;
+                result.autoClicks = effect.autoClicks;
+                result.multiplier = effect.multiplier;
+            });
+
+            return result;
+        }
+
+        function getActiveMutations() {
+            return activeMutations.map(mutation => ({
+                ...mutations[mutation.name],
+                timeLeft: Math.max(0, Math.ceil((mutation.endTime - Date.now()) / 1000))
+            }));
+        }
+
+        // Основные переменные
+        let clicks = 0;
+        let clickMultiplier = 1;
+        let autoClicks = 0;
+        let mutationPoints = 0;
+        let upgrades = {};
+        const clickCooldown = 50; // Защита от спама (50мс)
+        let lastClickTime = 0;
+        let lastClickValue = 0;
+        let totalClicks = 0;
+
+        // Элементы стартового экрана
+        const startScreen = document.querySelector('.start-screen');
+        const startButton = document.querySelector('.start-button');
+        const gameContainer = document.querySelector('.game-container');
+
+        // Элементы игры
+        const counter = document.querySelector('.counter');
+        const catImage = document.querySelector('.cat-image');
+        const mutationPointsDisplay = document.querySelector('.mutation-points');
+        const kingdomIncomeDisplay = document.querySelector('.kingdom-income');
+        const storedClicksDisplay = document.querySelector('.stored-clicks');
+        const timeCycleDisplay = document.querySelector('.time-cycle');
+        const mutationsContainer = document.querySelector('.mutations-container');
+
+        // Обработка старта игры
+        startButton.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            gameContainer.style.display = 'block';
+            updateUI();
+        });
+
+        // Инициализация табов
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                button.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Система достижений
+        const achievements = {
+            'first_click': {
+                name: 'Первый клик',
+                description: 'Сделать первый клик',
+                condition: (stats) => stats.totalClicks > 0,
+                reward: 10
+            },
+            'first_upgrade': {
+                name: 'Первое улучшение',
+                description: 'Купить первое улучшение',
+                condition: (stats) => Object.keys(stats.upgrades).length > 0,
+                reward: 50
+            },
+            'first_mutation': {
+                name: 'Первая мутация',
+                description: 'Получить первую мутацию',
+                condition: (stats) => stats.activeMutations.length > 0,
+                reward: 100
+            },
+            'click_master': {
+                name: 'Мастер кликов',
+                description: 'Накопить 1000 кликов',
+                condition: (stats) => stats.totalClicks >= 1000,
+                reward: 500
+            }
+        };
+
+        let unlockedAchievements = new Set();
+
+        // Система времени суток
+        const timeCycles = {
+            'morning': {
+                name: 'Утро',
+                duration: 2 * 60 * 1000,
+                bonus: 1.2,
+                description: 'Клики +20%'
+            },
+            'day': {
+                name: 'День',
+                duration: 3 * 60 * 1000,
+                bonus: 1.0,
+                description: 'Стандартные клики'
+            },
+            'evening': {
+                name: 'Вечер',
+                duration: 2 * 60 * 1000,
+                bonus: 1.1,
+                description: 'Клики +10%'
+            },
+            'night': {
+                name: 'Ночь',
+                duration: 2 * 60 * 1000,
+                bonus: 1.3,
+                description: 'Клики +30%'
+            }
+        };
+
+        let currentTimeCycle = 'night';
+        let timeCycleTimer = null;
+
+        function startTimeCycle() {
+            const cycle = timeCycles[currentTimeCycle];
+            timeCycleDisplay.textContent = cycle.name;
+            
+            timeCycleTimer = setTimeout(() => {
+                const cycles = Object.keys(timeCycles);
+                const currentIndex = cycles.indexOf(currentTimeCycle);
+                currentTimeCycle = cycles[(currentIndex + 1) % cycles.length];
+                startTimeCycle();
+            }, cycle.duration);
+        }
+
+        // Система событий
+        const events = {
+            'cat_nap': {
+                name: 'Кот вздремнул',
+                description: 'Кот устал и решил отдохнуть',
+                effect: (stats) => {
+                    stats.autoClicks *= 0.5;
+                    return 'Автоклики уменьшены на 50% на 1 минуту';
+                },
+                duration: 60000
+            },
+            'cat_energy': {
+                name: 'Кот полон энергии',
+                description: 'Кот выспался и готов к действию',
+                effect: (stats) => {
+                    stats.clickMultiplier *= 2;
+                    return 'Множитель кликов увеличен в 2 раза на 30 секунд';
+                },
+                duration: 30000
+            },
+            'cat_lucky': {
+                name: 'Кот везунчик',
+                description: 'Коту сегодня везет',
+                effect: (stats) => {
+                    stats.clicks += 100;
+                    return 'Получено 100 бонусных кликов';
+                },
+                duration: 0
+            },
+            'cat_rain': {
+                name: 'Кошачий дождь',
+                description: 'С неба падают коты',
+                effect: (stats) => {
+                    stats.autoClicks += 5;
+                    return 'Автоклики +5 на 2 минуты';
+                },
+                duration: 120000
+            },
+            'cat_meteor': {
+                name: 'Кошачий метеорит',
+                description: 'С неба падает огромный кот',
+                effect: (stats) => {
+                    stats.clicks *= 3;
+                    return 'Следующий клик будет в 3 раза сильнее';
+                },
+                duration: 0
+            },
+            'cat_party': {
+                name: 'Кошачья вечеринка',
+                description: 'Все коты собрались на праздник',
+                effect: (stats) => {
+                    stats.clickMultiplier *= 1.5;
+                    stats.autoClicks *= 1.5;
+                    return 'Все показатели +50% на 1 минуту';
+                },
+                duration: 60000
+            },
+            'cat_storm': {
+                name: 'Кошачья буря',
+                description: 'Сильный ветер из котов',
+                effect: (stats) => {
+                    const randomMultiplier = 0.5 + Math.random() * 2;
+                    stats.clickMultiplier *= randomMultiplier;
+                    return `Множитель кликов изменен на ${randomMultiplier.toFixed(1)}x на 30 секунд`;
+                },
+                duration: 30000
+            },
+            'cat_black_hole': {
+                name: 'Кошачья черная дыра',
+                description: 'Коты начинают сливаться',
+                effect: (stats) => {
+                    stats.clicks = 0;
+                    return 'Все клики обнулены, но следующая мутация будет бесплатной';
+                },
+                duration: 0
+            }
+        };
+
+        let activeEvent = null;
+        let eventTimer = null;
+
+        function startRandomEvent() {
+            if (activeEvent) return;
+
+            const eventKeys = Object.keys(events);
+            const randomEvent = events[eventKeys[Math.floor(Math.random() * eventKeys.length)]];
+            
+            activeEvent = randomEvent;
+            const effectMessage = randomEvent.effect({
+                clicks,
+                clickMultiplier,
+                autoClicks,
+                totalClicks
+            });
+
+            showEventNotification(randomEvent, effectMessage);
+
+            if (randomEvent.duration > 0) {
+                eventTimer = setTimeout(() => {
+                    activeEvent = null;
+                    updateUI();
+                }, randomEvent.duration);
+            }
+        }
+
+        // Запуск случайных событий каждые 3-7 минут
+        setInterval(() => {
+            if (Math.random() < 0.3) { // 30% шанс на событие
+                startRandomEvent();
+            }
+        }, (3 + Math.random() * 4) * 60 * 1000);
+
+        // Система королевств
+        const kingdoms = {
+            'forest': {
+                name: 'Лесное королевство',
+                description: 'Территория диких котов. Каждый уровень увеличивает шанс получить бонусные клики при обычном клике.',
+                cost: 5000,
+                income: 0.5,
+                level: 0,
+                bonusChance: 0.1, // 10% шанс на бонус
+                bonusMultiplier: 2 // Умножает клик на 2 при срабатывании
+            },
+            'city': {
+                name: 'Городское королевство',
+                description: 'Территория городских котов. Каждый уровень увеличивает доход от всех других королевств на 5%.',
+                cost: 10000,
+                income: 1,
+                level: 0,
+                globalBonus: 0.05 // +5% к доходу других королевств
+            },
+            'mountain': {
+                name: 'Горное королевство',
+                description: 'Территория горных котов. Каждый уровень увеличивает шанс получить мутацию при клике.',
+                cost: 20000,
+                income: 2,
+                level: 0,
+                mutationChance: 0.05 // 5% шанс на мутацию
+            }
+        };
+
+        // Система симбиоза
+        const companions = {
+            'owl': {
+                name: 'Сова',
+                description: 'Увеличивает ночные клики на 20%',
+                cost: 1000,
+                active: false,
+                effect: (clicks, multiplier) => clicks * multiplier * 1.2
+            },
+            'hamster': {
+                name: 'Хомяк',
+                description: 'Сохраняет 5% от каждого клика',
+                cost: 2000,
+                active: false,
+                effect: (clicks) => clicks * 0.05
+            },
+            'fox': {
+                name: 'Лиса',
+                description: 'Увеличивает все клики на 10%',
+                cost: 3000,
+                active: false,
+                effect: (clicks, multiplier) => clicks * multiplier * 1.1
+            }
+        };
+
+        let selectedCompanion = null;
+        let hamsterCache = 0;
+
+        // Обновление UI королевств
+        function updateKingdomsUI() {
+            const container = document.querySelector('.kingdoms-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            Object.entries(kingdoms).forEach(([id, kingdom]) => {
+                const card = document.createElement('div');
+                card.className = 'kingdom-card';
+                card.innerHTML = `
+                    <h3>${kingdom.name}</h3>
+                    <p>${kingdom.description}</p>
+                    <p>Уровень: ${kingdom.level}</p>
+                    <p>Доход: ${kingdom.income * kingdom.level}/сек</p>
+                    <p>Стоимость улучшения: ${kingdom.cost * (kingdom.level + 1)} кликов</p>
+                    <button class="upgrade-kingdom-btn" data-kingdom="${id}">Улучшить</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Обновление UI компаньонов
+        function updateCompanionsUI() {
+            const container = document.querySelector('.companions-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            Object.entries(companions).forEach(([id, companion]) => {
+                const card = document.createElement('div');
+                card.className = `companion-card ${companion.active ? 'active' : ''}`;
+                card.innerHTML = `
+                    <h3>${companion.name}</h3>
+                    <p>${companion.description}</p>
+                    <p>Стоимость: ${companion.cost} кликов</p>
+                    <button class="activate-companion-btn" data-companion="${id}">
+                        ${companion.active ? 'Активен' : 'Активировать'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Обработка улучшения королевств
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('upgrade-kingdom-btn')) {
+                const kingdomId = e.target.dataset.kingdom;
+                const kingdom = kingdoms[kingdomId];
+                const cost = kingdom.cost * (kingdom.level + 1);
+
+                if (clicks >= cost) {
+                    clicks -= cost;
+                    kingdom.level++;
+                    updateKingdomsUI();
+                    updateUI();
+                }
+            }
+        });
+
+        // Обработка активации компаньонов
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('activate-companion-btn')) {
+                const companionId = e.target.dataset.companion;
+                const companion = companions[companionId];
+
+                if (!companion.active && clicks >= companion.cost) {
+                    clicks -= companion.cost;
+                    companion.active = true;
+                    selectedCompanion = companionId;
+                    updateCompanionsUI();
+                    updateUI();
+                }
+            }
+        });
+
+        // Система измерений
+        const dimensions = {
+            'normal': {
+                name: 'Обычное измерение',
+                description: 'Стандартный мир котов',
+                unlocked: true,
+                effect: (clicks) => clicks
+            },
+            'cyber': {
+                name: 'Киберпространство',
+                description: 'Мир цифровых котов',
+                unlocked: false,
+                cost: 5000,
+                effect: (clicks) => {
+                    const bits = Math.floor(clicks * 0.8);
+                    return {
+                        clicks: clicks * 0.2,
+                        bits: bits
+                    };
+                }
+            }
+        };
+
+        let currentDimension = 'normal';
+        let bits = 0;
+
+        // Обновление UI измерений
+        function updateDimensionsUI() {
+            const container = document.querySelector('.dimensions-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            Object.entries(dimensions).forEach(([id, dimension]) => {
+                const card = document.createElement('div');
+                card.className = `dimension-card ${id === currentDimension ? 'active' : ''}`;
+                card.innerHTML = `
+                    <h3>${dimension.name}</h3>
+                    <p>${dimension.description}</p>
+                    ${!dimension.unlocked ? `<p>Стоимость: ${dimension.cost} кликов</p>` : ''}
+                    <button class="switch-dimension-btn" data-dimension="${id}" 
+                        ${!dimension.unlocked ? `disabled` : ''}>
+                        ${id === currentDimension ? 'Активно' : 'Переключиться'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Обработка переключения измерений
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('switch-dimension-btn')) {
+                const dimensionId = e.target.dataset.dimension;
+                const dimension = dimensions[dimensionId];
+
+                if (!dimension.unlocked && clicks >= dimension.cost) {
+                    clicks -= dimension.cost;
+                    dimension.unlocked = true;
+                }
+
+                if (dimension.unlocked) {
+                    currentDimension = dimensionId;
+                    updateDimensionsUI();
+                    updateUI();
+                }
+            }
+        });
+
+        // Система эволюции
+        const evolutions = {
+            'fluffy': {
+                name: 'Пушистый кот',
+                description: 'Увеличивает клики на 50%',
+                cost: 10000,
+                unlocked: false,
+                effect: (clicks) => clicks * 1.5
+            },
+            'cyber': {
+                name: 'Кибер-кот',
+                description: 'Увеличивает конвертацию в биты на 50%',
+                cost: 20000,
+                unlocked: false,
+                effect: (clicks) => {
+                    const bits = Math.floor(clicks * 1.2);
+                    return {
+                        clicks: clicks * 0.2,
+                        bits: bits
+                    };
+                }
+            },
+            'magic': {
+                name: 'Магический кот',
+                description: 'Увеличивает все клики на 100%',
+                cost: 30000,
+                unlocked: false,
+                effect: (clicks) => clicks * 2
+            }
+        };
+
+        let currentEvolution = null;
+
+        // Обновление UI эволюции
+        function updateEvolutionUI() {
+            const container = document.querySelector('.evolution-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            Object.entries(evolutions).forEach(([id, evolution]) => {
+                const card = document.createElement('div');
+                card.className = `evolution-card ${id === currentEvolution ? 'active' : ''}`;
+                card.innerHTML = `
+                    <h3>${evolution.name}</h3>
+                    <p>${evolution.description}</p>
+                    ${!evolution.unlocked ? `<p>Стоимость: ${evolution.cost} кликов</p>` : ''}
+                    <button class="activate-evolution-btn" data-evolution="${id}" 
+                        ${!evolution.unlocked ? `disabled` : ''}>
+                        ${id === currentEvolution ? 'Активна' : 'Активировать'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Обработка активации эволюции
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('activate-evolution-btn')) {
+                const evolutionId = e.target.dataset.evolution;
+                const evolution = evolutions[evolutionId];
+
+                if (!evolution.unlocked && clicks >= evolution.cost) {
+                    clicks -= evolution.cost;
+                    evolution.unlocked = true;
+                }
+
+                if (evolution.unlocked) {
+                    currentEvolution = evolutionId;
+                    updateEvolutionUI();
+                    updateUI();
+                }
+            }
+        });
+
+        // Обновляем обработчик кликов
+        catImage.onclick = function(e) {
+            if (Date.now() - lastClickTime < clickCooldown) return;
+            lastClickTime = Date.now();
+
+            let clickValue = 0.1 * clickMultiplier;
+            
+            // Применяем бонус времени суток
+            clickValue *= timeCycles[currentTimeCycle].bonus;
+            
+            // Проверяем бонусы королевств
+            if (kingdoms.forest.level > 0) {
+                if (Math.random() < kingdoms.forest.bonusChance * kingdoms.forest.level) {
+                    clickValue *= kingdoms.forest.bonusMultiplier;
+                    console.log('Сработал бонус Лесного королевства!');
+                }
+            }
+
+            if (kingdoms.mountain.level > 0) {
+                if (Math.random() < kingdoms.mountain.mutationChance * kingdoms.mountain.level) {
+                    const newMutation = getRandomMutation();
+                    if (newMutation) {
+                        activateMutation(newMutation);
+                        updateMutationsUI();
+                        showMutationNotification(mutations[newMutation]);
+                    }
+                }
+            }
+            
+            // Применяем эффекты компаньонов
+            if (selectedCompanion) {
+                const companion = companions[selectedCompanion];
+                if (companion.id === 'hamster') {
+                    hamsterCache += companion.effect(clickValue);
+                } else {
+                    clickValue = companion.effect(clickValue, clickMultiplier);
+                }
+            }
+            
+            // Применяем эффекты измерения
+            const dimension = dimensions[currentDimension];
+            if (currentDimension === 'cyber') {
+                const result = dimension.effect(clickValue);
+                clickValue = result.clicks;
+                bits += result.bits;
+            } else {
+                clickValue = dimension.effect(clickValue);
+            }
+
+            // Применяем эффекты эволюции
+            if (currentEvolution) {
+                const evolution = evolutions[currentEvolution];
+                if (currentEvolution === 'cyber') {
+                    const result = evolution.effect(clickValue);
+                    clickValue = result.clicks;
+                    bits += result.bits;
+                } else {
+                    clickValue = evolution.effect(clickValue);
+                }
+            }
+            
+            // Применяем эффекты мутаций
+            const mutationEffects = checkMutationEffects(clickValue, autoClicks, totalClicks, lastClickValue, clickMultiplier);
+            clickValue = mutationEffects.clicks;
+            autoClicks = mutationEffects.autoClicks;
+            clickMultiplier = mutationEffects.multiplier;
+            
+            clicks += clickValue;
+            totalClicks += clickValue;
+            lastClickValue = clickValue;
+            
+            const nextMutationCost = getNextMutationCost();
+            if (totalClicks >= nextMutationCost && totalClicks - clickValue < nextMutationCost) {
+                const newMutation = getRandomMutation();
+                if (newMutation) {
+                    activateMutation(newMutation);
+                    updateMutationsUI();
+                    showMutationNotification(mutations[newMutation]);
+                }
+            }
+            
+            checkAchievements();
+            checkQuestsProgress();
+            updateUI();
+        };
+
+        // Обновляем UI
+        function updateUI() {
+            counter.textContent = clicks.toFixed(1);
+            if (mutationPointsDisplay) {
+                const nextCost = getNextMutationCost();
+                mutationPointsDisplay.textContent = `${totalClicks.toFixed(1)}/${nextCost}`;
+            }
+            
+            // Обновляем отображение дохода
+            let totalIncome = autoClicks;
+            Object.values(kingdoms).forEach(kingdom => {
+                totalIncome += kingdom.income * kingdom.level;
+            });
+            Object.values(businesses).forEach(business => {
+                if (business.income) {
+                    totalIncome += business.income * business.level;
+                }
+            });
+            
+            if (kingdomIncomeDisplay) kingdomIncomeDisplay.textContent = `${totalIncome.toFixed(1)}/сек`;
+            if (storedClicksDisplay) storedClicksDisplay.textContent = hamsterCache.toFixed(1);
+            if (timeCycleDisplay) timeCycleDisplay.textContent = currentTimeCycle;
+            
+            // Обновляем цены улучшений
+            document.querySelectorAll('.upgrade-card').forEach(card => {
+                const type = card.getAttribute('data-type');
+                const baseCost = parseInt(card.getAttribute('data-base-cost'));
+                const price = Math.floor(baseCost * Math.pow(1.5, upgrades[type] || 0));
+                const priceElement = card.querySelector('.upgrade-price');
+                if (priceElement) priceElement.textContent = `${price.toFixed(1)} кликов`;
+                
+                const button = card.querySelector('.upgrade-btn');
+                if (button) button.disabled = clicks < price;
+            });
+
+            updateMutationsUI();
+            updateKingdomsUI();
+            updateCompanionsUI();
+            updateDimensionsUI();
+            updateEvolutionUI();
+            updateMagicUI();
+            updateBusinessUI();
+            updateWarsUI();
+            updateQuestsUI();
+        }
+
+        // Автоклики
+        setInterval(() => {
+            if (autoClicks > 0) {
+                console.log('Автоклик сработал! Добавлено:', autoClicks, 'кликов');
+                clicks += autoClicks;
+                totalClicks += autoClicks;
+                updateUI();
+            }
+        }, 1000);
+
+        // Обработка улучшений
+        document.querySelectorAll('.upgrade-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.upgrade-card');
+                const type = card.getAttribute('data-type');
+                const baseCost = parseInt(card.getAttribute('data-base-cost'));
+                const price = Math.floor(baseCost * Math.pow(1.5, upgrades[type] || 0));
+                
+                if (clicks >= price) {
+                    clicks -= price;
+                    upgrades[type] = (upgrades[type] || 0) + 1;
+                    
+                    switch(type) {
+                        case 'laser':
+                            clickMultiplier *= 2;
+                            console.log('Улучшение "Лазерная указка" куплено. Множитель:', clickMultiplier);
+                            break;
+                        case 'feeder':
+                            autoClicks += 1;
+                            console.log('Улучшение "Автокормушка" куплено. Автоклики:', autoClicks);
+                            break;
+                        case 'trainer':
+                            clickMultiplier *= 2;
+                            console.log('Улучшение "Тренер" куплено. Множитель:', clickMultiplier);
+                            break;
+                        case 'robot':
+                            autoClicks += 5;
+                            console.log('Улучшение "Робот-кот" куплено. Автоклики:', autoClicks);
+                            break;
+                    }
+                    
+                    updateUI();
+                }
+            });
+        });
+
+        // Инициализация только после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+            updateMutationsUI();
+            startTimeCycle();
+        });
+
+        // Добавляем стили для уведомлений и фона
+        const style = document.createElement('style');
+        style.textContent = `
+            body {
+                background-color: #000000 !important;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+            }
+
+            .start-screen {
+                background-color: #000000 !important;
+                color: #ffffff;
+            }
+
+            .game-container {
+                background-color: #000000 !important;
+                color: #ffffff;
+            }
+
+            .achievement-notification, .event-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.8);
+                color: #ffd700;
+                padding: 15px;
+                border-radius: 10px;
+                border: 2px solid #ffd700;
+                animation: slideIn 0.5s ease-out;
+                z-index: 1000;
+            }
+
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Обновление UI мутаций
+        function updateMutationsUI() {
+            const container = document.querySelector('.mutations-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            const activeMutationsList = getActiveMutations();
+            
+            if (activeMutationsList.length === 0) {
+                container.innerHTML = '<p>У вас пока нет мутаций</p>';
+                return;
+            }
+
+            activeMutationsList.forEach(mutation => {
+                const card = document.createElement('div');
+                card.className = 'mutation-card';
+                card.innerHTML = `
+                    <h3>${mutation.name}</h3>
+                    <p>${mutation.description}</p>
+                    <p>Осталось: ${mutation.timeLeft} сек</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Показ уведомления о мутации
+        function showMutationNotification(mutation) {
+            const notification = document.createElement('div');
+            notification.className = 'mutation-notification';
+            notification.innerHTML = `
+                <h3>Новая мутация!</h3>
+                <p>${mutation.name}</p>
+                <p>${mutation.description}</p>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Система магии
+        const spells = {
+            'laser_paw': {
+                name: 'Лазерная лапа',
+                description: 'Наносит урон врагам',
+                cost: 50,
+                unlocked: false,
+                effect: () => {
+                    if (currentWar) {
+                        warClicks += 10;
+                        updateWarsUI();
+                    }
+                }
+            },
+            'meow_therapy': {
+                name: 'Мяу-терапия',
+                description: 'Восстанавливает 10% кликов',
+                cost: 200,
+                unlocked: false,
+                effect: () => {
+                    clicks += totalClicks * 0.1;
+                }
+            },
+            'ninja_cat': {
+                name: 'Кот-ниндзя',
+                description: 'Увеличивает скорость кликов на 30 секунд',
+                cost: 1000,
+                unlocked: false,
+                effect: () => {
+                    clickMultiplier *= 2;
+                    setTimeout(() => {
+                        clickMultiplier /= 2;
+                        updateUI();
+                    }, 30000);
+                }
+            }
+        };
+
+        // Обновление UI магии
+        function updateMagicUI() {
+            const container = document.querySelector('.magic-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            Object.entries(spells).forEach(([id, spell]) => {
+                const card = document.createElement('div');
+                card.className = 'spell-card';
+                card.innerHTML = `
+                    <h3>${spell.name}</h3>
+                    <p>${spell.description}</p>
+                    <p>Стоимость: ${spell.cost} кликов</p>
+                    <button class="cast-spell-btn" data-spell="${id}" 
+                        ${!spell.unlocked ? 'disabled' : ''}>
+                        ${!spell.unlocked ? 'Заблокировано' : 'Применить'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Обработка заклинаний
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('cast-spell-btn')) {
+                const spellId = e.target.dataset.spell;
+                const spell = spells[spellId];
+
+                if (spell.unlocked && clicks >= spell.cost) {
+                    clicks -= spell.cost;
+                    spell.effect();
+                    updateUI();
+                }
+            }
+        });
+
+        // Разблокировка заклинаний
+        setInterval(() => {
+            if (totalClicks >= 2000) {
+                Object.values(spells).forEach(spell => {
+                    spell.unlocked = true;
+                });
+                updateMagicUI();
+            }
+        }, 1000);
+
+        // Система бизнеса
+        const businesses = {
+            'cat_cafe': {
+                name: 'Кофейня для котов',
+                description: 'Пассивный доход: +2 клика/сек',
+                cost: 5000,
+                income: 2,
+                level: 0,
+                savings: 0
+            },
+            'toy_factory': {
+                name: 'Фабрика игрушек',
+                description: 'Ускоряет покупку улучшений',
+                cost: 10000,
+                level: 0,
+                effect: (price) => price * 0.9 // Скидка 10% на улучшения
+            },
+            'cat_bank': {
+                name: 'Банк котов',
+                description: 'Накопление 2% от кликов ежедневно',
+                cost: 20000,
+                level: 0,
+                savings: 0
+            }
+        };
+
+        // Обновление UI бизнеса
+        function updateBusinessUI() {
+            const container = document.querySelector('.business-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            Object.entries(businesses).forEach(([id, business]) => {
+                const card = document.createElement('div');
+                card.className = 'business-card';
+                card.innerHTML = `
+                    <h3>${business.name}</h3>
+                    <p>${business.description}</p>
+                    <p>Уровень: ${business.level}</p>
+                    ${business.income ? `<p>Доход: ${business.income * business.level}/сек</p>` : ''}
+                    ${business.savings !== undefined ? `<p>Накоплено: ${business.savings.toFixed(1)} кликов</p>` : ''}
+                    <p>Стоимость улучшения: ${business.cost * (business.level + 1)} кликов</p>
+                    <button class="upgrade-business-btn" data-business="${id}">Улучшить</button>
+                    ${business.savings !== undefined ? `<button class="withdraw-savings-btn" data-business="${id}">Снять накопления</button>` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Обработка улучшения бизнеса
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('upgrade-business-btn')) {
+                const businessId = e.target.dataset.business;
+                const business = businesses[businessId];
+                const cost = business.cost * (business.level + 1);
+
+                if (clicks >= cost) {
+                    clicks -= cost;
+                    business.level++;
+                    updateBusinessUI();
+                    updateUI();
+                }
+            }
+        });
+
+        // Обработка снятия накоплений
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('withdraw-savings-btn')) {
+                const businessId = e.target.dataset.business;
+                const business = businesses[businessId];
+
+                if (business.savings > 0) {
+                    clicks += business.savings;
+                    business.savings = 0;
+                    updateBusinessUI();
+                    updateUI();
+                }
+            }
+        });
+
+        // Обновление накоплений каждую секунду
+        setInterval(() => {
+            if (businesses.cat_bank.level > 0) {
+                businesses.cat_bank.savings += clicks * 0.02 / 86400; // 2% в день
+                updateBusinessUI();
+            }
+        }, 1000);
+
+        // Система войн
+        const wars = {
+            'robot_dog': {
+                name: 'Собака-робот',
+                description: '1000 кликов за 60 секунд',
+                clicks: 0,
+                target: 1000,
+                time: 60,
+                reward: 2000,
+                penalty: -500
+            },
+            'water_cat': {
+                name: 'Водяной кот',
+                description: '800 кликов за 45 секунд',
+                clicks: 0,
+                target: 800,
+                time: 45,
+                reward: 1500,
+                penalty: -400
+            },
+            'ghost_cat': {
+                name: 'Кот-призрак',
+                description: '1200 кликов за 30 секунд',
+                clicks: 0,
+                target: 1200,
+                time: 30,
+                reward: 3000,
+                penalty: -600
+            }
+        };
+
+        let currentWar = null;
+        let warTimer = null;
+        let warClicks = 0;
+
+        // Обновление UI войн
+        function updateWarsUI() {
+            const container = document.querySelector('.wars-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            Object.entries(wars).forEach(([id, war]) => {
+                const card = document.createElement('div');
+                card.className = `war-card ${id === currentWar ? 'active' : ''}`;
+                card.innerHTML = `
+                    <h3>${war.name}</h3>
+                    <p>${war.description}</p>
+                    ${id === currentWar ? `
+                        <p>Прогресс: ${warClicks.toFixed(1)}/${war.target}</p>
+                        <p>Осталось времени: ${war.time} сек</p>
+                    ` : ''}
+                    <button class="start-war-btn" data-war="${id}" 
+                        ${currentWar ? 'disabled' : ''}>
+                        ${id === currentWar ? 'В процессе' : 'Начать битву'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Обработка начала войны
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('start-war-btn')) {
+                const warId = e.target.dataset.war;
+                const war = wars[warId];
+
+                if (!currentWar) {
+                    currentWar = warId;
+                    warClicks = 0;
+                    war.time = wars[warId].time;
+                    updateWarsUI();
+
+                    // Запускаем таймер
+                    warTimer = setInterval(() => {
+                        war.time--;
+                        if (war.time <= 0) {
+                            clearInterval(warTimer);
+                            if (warClicks >= war.target) {
+                                clicks += war.reward;
+                                showWarNotification(war, true);
+                            } else {
+                                clicks += war.penalty;
+                                showWarNotification(war, false);
+                            }
+                            currentWar = null;
+                            updateWarsUI();
+                            updateUI();
+                        } else {
+                            updateWarsUI();
+                        }
+                    }, 1000);
+                }
+            }
+        });
+
+        // Показ уведомления о результате войны
+        function showWarNotification(war, victory) {
+            const notification = document.createElement('div');
+            notification.className = 'war-notification';
+            notification.innerHTML = `
+                <h3>${victory ? 'Победа!' : 'Поражение...'}</h3>
+                <p>${war.name}</p>
+                <p>${victory ? `Получено ${war.reward} кликов` : `Потеряно ${-war.penalty} кликов`}</p>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Разблокировка войн
+        setInterval(() => {
+            if (totalClicks >= 10000) {
+                Object.values(wars).forEach(war => {
+                    war.unlocked = true;
+                });
+                updateWarsUI();
+            }
+        }, 1000);
+
+        // Система квестов
+        const quests = {
+            'first_steps': {
+                name: 'Первые шаги',
+                description: 'Накопить 100 кликов',
+                progress: 0,
+                target: 100,
+                reward: 50,
+                unlocked: true,
+                completed: false
+            },
+            'upgrade_master': {
+                name: 'Мастер улучшений',
+                description: 'Купить 5 улучшений',
+                progress: 0,
+                target: 5,
+                reward: 200,
+                unlocked: false,
+                completed: false
+            },
+            'mutation_expert': {
+                name: 'Эксперт мутаций',
+                description: 'Получить 3 мутации',
+                progress: 0,
+                target: 3,
+                reward: 500,
+                unlocked: false,
+                completed: false
+            },
+            'kingdom_ruler': {
+                name: 'Правитель королевств',
+                description: 'Достичь 3 уровня во всех королевствах',
+                progress: 0,
+                target: 3,
+                reward: 1000,
+                unlocked: false,
+                completed: false
+            },
+            'companion_collector': {
+                name: 'Собиратель компаньонов',
+                description: 'Активировать всех компаньонов',
+                progress: 0,
+                target: 3,
+                reward: 800,
+                unlocked: false,
+                completed: false
+            },
+            'dimension_traveler': {
+                name: 'Путешественник измерений',
+                description: 'Разблокировать киберпространство',
+                progress: 0,
+                target: 1,
+                reward: 1000,
+                unlocked: false,
+                completed: false
+            },
+            'magic_master': {
+                name: 'Магистр магии',
+                description: 'Использовать все заклинания',
+                progress: 0,
+                target: 3,
+                reward: 1500,
+                unlocked: false,
+                completed: false
+            },
+            'evolution_champion': {
+                name: 'Чемпион эволюции',
+                description: 'Разблокировать все формы эволюции',
+                progress: 0,
+                target: 3,
+                reward: 3000,
+                unlocked: false,
+                completed: false
+            },
+            'business_magnate': {
+                name: 'Бизнес-магнат',
+                description: 'Достичь 5 уровня во всех бизнесах',
+                progress: 0,
+                target: 5,
+                reward: 5000,
+                unlocked: false,
+                completed: false
+            },
+            'war_hero': {
+                name: 'Герой войн',
+                description: 'Победить всех боссов',
+                progress: 0,
+                target: 3,
+                reward: 4000,
+                unlocked: false,
+                completed: false
+            }
+        };
+
+        // Обновление UI квестов
+        function updateQuestsUI() {
+            const container = document.querySelector('.quests-container');
+            if (!container) return;
+
+            container.innerHTML = `
+                <h2>Квесты</h2>
+                <p class="quests-description">Выполняйте задания, чтобы получать награды!</p>
+            `;
+
+            Object.entries(quests).forEach(([id, quest]) => {
+                if (quest.unlocked) {
+                    const card = document.createElement('div');
+                    card.className = `quest-card ${quest.completed ? 'completed' : ''}`;
+                    card.innerHTML = `
+                        <h3>${quest.name}</h3>
+                        <p>${quest.description}</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: ${(quest.progress / quest.target) * 100}%"></div>
+                        </div>
+                        <p>Прогресс: ${quest.progress}/${quest.target}</p>
+                        <p>Награда: ${quest.reward} кликов</p>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        // Проверка прогресса квестов
+        function checkQuestsProgress() {
+            // Первые шаги
+            quests.first_steps.progress = totalClicks;
+            if (totalClicks >= 100) {
+                quests.first_steps.completed = true;
+            }
+
+            // Мастер улучшений
+            quests.upgrade_master.progress = Object.values(upgrades).reduce((a, b) => a + b, 0);
+            if (quests.upgrade_master.progress >= 5) {
+                quests.upgrade_master.completed = true;
+            }
+
+            // Эксперт мутаций
+            quests.mutation_expert.progress = activeMutations.length;
+            if (quests.mutation_expert.progress >= 3) {
+                quests.mutation_expert.completed = true;
+            }
+
+            // Правитель королевств
+            quests.kingdom_ruler.progress = Math.min(...Object.values(kingdoms).map(k => k.level));
+            if (quests.kingdom_ruler.progress >= 3) {
+                quests.kingdom_ruler.completed = true;
+            }
+
+            // Собиратель компаньонов
+            quests.companion_collector.progress = Object.values(companions).filter(c => c.active).length;
+            if (quests.companion_collector.progress >= 3) {
+                quests.companion_collector.completed = true;
+            }
+
+            // Путешественник измерений
+            quests.dimension_traveler.progress = dimensions.cyber.unlocked ? 1 : 0;
+            if (quests.dimension_traveler.progress >= 1) {
+                quests.dimension_traveler.completed = true;
+            }
+
+            // Магистр магии
+            quests.magic_master.progress = Object.values(spells).filter(s => s.unlocked).length;
+            if (quests.magic_master.progress >= 3) {
+                quests.magic_master.completed = true;
+            }
+
+            // Чемпион эволюции
+            quests.evolution_champion.progress = Object.values(evolutions).filter(e => e.unlocked).length;
+            if (quests.evolution_champion.progress >= 3) {
+                quests.evolution_champion.completed = true;
+            }
+
+            // Бизнес-магнат
+            quests.business_magnate.progress = Math.min(...Object.values(businesses).map(b => b.level));
+            if (quests.business_magnate.progress >= 5) {
+                quests.business_magnate.completed = true;
+            }
+
+            // Герой войн
+            quests.war_hero.progress = Object.values(wars).filter(w => w.unlocked).length;
+            if (quests.war_hero.progress >= 3) {
+                quests.war_hero.completed = true;
+            }
+
+            // Разблокировка квестов
+            if (totalClicks >= 500) quests.upgrade_master.unlocked = true;
+            if (totalClicks >= 1000) quests.mutation_expert.unlocked = true;
+            if (totalClicks >= 2000) quests.kingdom_ruler.unlocked = true;
+            if (totalClicks >= 3000) quests.companion_collector.unlocked = true;
+            if (totalClicks >= 5000) quests.dimension_traveler.unlocked = true;
+            if (totalClicks >= 7000) quests.magic_master.unlocked = true;
+            if (totalClicks >= 10000) quests.evolution_champion.unlocked = true;
+            if (totalClicks >= 15000) quests.business_magnate.unlocked = true;
+            if (totalClicks >= 20000) quests.war_hero.unlocked = true;
+
+            // Проверка завершения квестов
+            Object.entries(quests).forEach(([id, quest]) => {
+                if (quest.unlocked && !quest.completed && quest.progress >= quest.target) {
+                    quest.completed = true;
+                    clicks += quest.reward;
+                    showQuestNotification(quest);
+                }
+            });
+
+            updateQuestsUI();
+        }
+
+        // Показ уведомления о завершении квеста
+        function showQuestNotification(quest) {
+            const notification = document.createElement('div');
+            notification.className = 'quest-notification';
+            notification.innerHTML = `
+                <h3>Квест выполнен!</h3>
+                <p>${quest.name}</p>
+                <p>Получено ${quest.reward} кликов</p>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Добавляем чит-код для тестирования
+        window.addEventListener('keydown', (e) => {
+            console.log('Нажата клавиша:', e.key, 'Shift:', e.shiftKey);
+            
+            if (e.key.toLowerCase() === 'g' && e.shiftKey) {
+                clicks += 1000000;
+                console.log('Чит-код активирован! +1,000,000 кликов');
+                updateUI();
+            }
+        });
+
+        // Альтернативный способ - кнопка в интерфейсе
+        const cheatButton = document.createElement('button');
+        cheatButton.textContent = 'Чит-код (Shift+G)';
+        cheatButton.style.position = 'fixed';
+        cheatButton.style.top = '10px';
+        cheatButton.style.right = '10px';
+        cheatButton.style.zIndex = '9999';
+        cheatButton.onclick = () => {
+            clicks += 1000000;
+            console.log('Чит-код активирован через кнопку! +1,000,000 кликов');
+            updateUI();
+        };
+        document.body.appendChild(cheatButton);
+
+        // Система пассивного дохода
+        setInterval(() => {
+            let totalIncome = 0;
+            
+            // Доход от королевств
+            Object.values(kingdoms).forEach(kingdom => {
+                let kingdomIncome = kingdom.income * kingdom.level;
+                
+                // Применяем бонус от Городского королевства
+                if (kingdoms.city.level > 0) {
+                    kingdomIncome *= (1 + kingdoms.city.globalBonus * kingdoms.city.level);
+                }
+                
+                totalIncome += kingdomIncome;
+            });
+            
+            // Доход от бизнеса
+            Object.values(businesses).forEach(business => {
+                if (business.income) {
+                    totalIncome += business.income * business.level;
+                }
+            });
+            
+            // Добавляем доход к кликам
+            if (totalIncome > 0) {
+                console.log('Пассивный доход:', totalIncome.toFixed(1), 'кликов/сек');
+                clicks += totalIncome;
+                totalClicks += totalIncome;
+                updateUI();
+            }
+        }, 1000);
+
+        // Функция проверки достижений
+        function checkAchievements() {
+            const stats = {
+                totalClicks,
+                upgrades,
+                activeMutations
+            };
+
+            for (const [id, achievement] of Object.entries(achievements)) {
+                if (!unlockedAchievements.has(id) && achievement.condition(stats)) {
+                    unlockedAchievements.add(id);
+                    showAchievementNotification(achievement);
+                    clicks += achievement.reward;
+                }
+            }
+        }
+
+        // Показ уведомления о достижении
+        function showAchievementNotification(achievement) {
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.innerHTML = `
+                <h3>Достижение разблокировано!</h3>
+                <p>${achievement.name}</p>
+                <p>${achievement.description}</p>
+                <p>Награда: ${achievement.reward} кликов</p>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Показ уведомления о событии
+        function showEventNotification(event, effectMessage) {
+            const notification = document.createElement('div');
+            notification.className = 'event-notification';
+            notification.innerHTML = `
+                <h3>Событие: ${event.name}</h3>
+                <p>${event.description}</p>
+                <p>${effectMessage}</p>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

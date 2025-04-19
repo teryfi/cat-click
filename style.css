@@ -1,0 +1,475 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #e74c3c;
+    --text-color: #ecf0f1;
+    --background-color: #1a1a1a;
+    --card-background: rgba(44, 62, 80, 0.8);
+    --border-color: #3498db;
+    --neon-blue: #00ffff;
+    --neon-pink: #ff00ff;
+    --neon-green: #00ff00;
+    --dark-blue: #000033;
+    --black: #000000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Press Start 2P', cursive;
+}
+
+body {
+    background: linear-gradient(135deg, var(--black) 0%, var(--dark-blue) 100%);
+    color: var(--neon-blue);
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Эффект шума на фоне */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c8TV1mAAAAG3RSTlNAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAvEOwtAAAFVklEQVR4XpWWB67c2BUFb3g557T/hRo9/WUMZHlgr4Bg8Z4qQgQJlHI4A8SzFVrapvmTF9O7dmYRFZ60YiBhJRCgh1FYhiLAmdvX0CzTOpNE77ME0Zty/nWWzchDtiqrmQDeuv3powQ5ta2eN0FY0InkqDD73lT9c9lEzwUNqgFHs9VQce3TVClFCQrSTfOiYkVJQBmpbq2L6iZavPnAPcoU0dSw0SUTqz/GtrGuXfbyyBniKykOWQWGqwwMA7QiYAxi+IlPdqo+hYHnUt5ZPfnsHJyNiDtnpJyayNBkF6cWoYGAMY92U2hXHF/C1M8uP/ZtYdiuj26UdAdQQSXQErwSOMzt/XWRWAz5GuSBIkwG1H3FabJ2OsUOUhGC6tK4EMtJO0ttC6IBD3kM0ve0tJwMdSfjZo+EEISaeTr9P3wYrGjXqyC1krcKdhMpxEnt5JetoulscpyzhXN5FRpuPHvbeQaKxFAEB6EN+cYN6xD7RYGpXpNndMmZgM5Dcs3YSNFDHUo2LGfZuukSWyUYirJAdYbF3MfqEKmjM+I2EfhA94iG3L7uKrR+GdWD73ydlIB+6hgref1QTlmgmbM3/LeX5GI1Ux1RWpgxpLuZ2+I+IjzZ8wqE4nilvQdkUdfhzI5QDWy+kw5Wgg2pGpeEVeCCA7b85BO3F9DzxB3cdqvBzWcmzbyMiqhzuYqtHRVG2y4x+KOlnyqla8AoWWpuBoYRxzXrfKuILl6SfiWCbjxoZJUaCBj1CjH7GIaDbc9kqBY3W/Rgjda1iqQcOJu2WW+76pZC9QG7M00dffe9hNnseupFL53r8F7YHSwJWUKP2q+k7RdsxyOB11n0xtOvnW4irMMFNV4H0uqwS5ExsmP9AxbDTc9JwgneAT5vTiUSm1E7BSflSt3bfa1tv8Di3R8n3Af7MNWzs49hmauE2wP+ttrq+AsWpFG2awvsuOqbipWHgtuvuaAE+A1Z/7gC9hesnr+7wqCwG8c5yAg3AL1fm8T9AZtp/bbJGwl1pNrE7RuOX7PeMRUERVaPpEs+yqeoSmuOlokqw49pgomjLeh7icHNlG19yjs6XXOMedYm5xH2YxpV2tc0Ro2jJfxC50ApuxGob7lMsxfTbeUv07TyYxpeLucEH1gNd4IKH2LAg5TdVhlCafZvpskfncCfx8pOhJzd76bJWeYFnFciwcYfubRc12Ip/ppIhA1/mSZ/RxjFDrJC5xifFjJpY2Xl5zXdguFqYyTR1zSp1Y9p+tktDYYSNflcxI0iyO4TPBdlRcpeqjK/piF5bklq77VSEaA+z8qmJTFzIWiitbnzR794USKBUaT0NTEsVjZqLaFVqJoPN9ODG70IPbfBHKK+/q/AWR0tJzYHRULOa4MP+W/HfGadZUbfw177G7j/OGbIs8TahLyynl4X4RinF793Oz+BU0saXtUHrVBFT/DnA3ctNPoGbs4hRIjTok8oi+WwPeerKPRYzsU1rPjZgQj3n1uRyTZqihsDd0k1pZb5wltjpQl0Ltv1cr7XlVrUe4uK8Gqy7kTQtwYl4Q7n6g8bMQmzXk9pWj1JJYlFzrdEF1dZ2jzF1uLybSWsFqyYNK6auGDU6WQ4Fb0tnH4ZcFuocLP+rItySztSC7rxEE5us2QHZWV9PvB9uIqlpXyyPOXb94m2iqfpmwFhOwW4dm7+j0LwAWcF4/NIbmLTE9+cchkmqfsKMAAAAASUVORK5CYII=');
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.start-screen h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+}
+
+.start-screen p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.start-button {
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.start-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+}
+
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.counter {
+    font-size: 2.5em;
+    text-align: center;
+    margin: 20px 0;
+    color: var(--neon-green);
+    text-shadow: 0 0 10px var(--neon-green),
+                 0 0 20px var(--neon-green);
+    font-family: 'Digital', monospace;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.stat-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--neon-pink);
+    border-radius: 5px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    box-shadow: 0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink);
+    transform: translateY(-5px);
+}
+
+.stat-card h3 {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.stat-card p {
+    font-size: 1.2rem;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8em;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+    background: var(--neon-blue);
+    color: var(--black);
+    box-shadow: 0 0 10px var(--neon-blue),
+                0 0 20px var(--neon-blue);
+}
+
+.cat-image {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.cat-image::before,
+.cat-image::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue),
+                0 0 20px var(--neon-blue),
+                0 0 30px var(--neon-blue);
+    animation: pulse 2s infinite;
+}
+
+.cat-image::before {
+    width: 220px;
+    height: 220px;
+    top: -10px;
+    left: -10px;
+}
+
+.cat-image::after {
+    width: 240px;
+    height: 240px;
+    top: -20px;
+    left: -20px;
+    animation-delay: 0.5s;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    border: 1px solid var(--neon-green);
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.tab-content.active {
+    display: block;
+    animation: scan 0.5s ease;
+}
+
+@keyframes scan {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Карточки улучшений и мутаций */
+.upgrade-card,
+.mutation-card,
+.kingdom-card,
+.companion-card,
+.spell-card,
+.evolution-card,
+.business-card,
+.war-card,
+.quest-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--neon-blue);
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upgrade-card::before,
+.mutation-card::before,
+.kingdom-card::before,
+.companion-card::before,
+.spell-card::before,
+.evolution-card::before,
+.business-card::before,
+.war-card::before,
+.quest-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+}
+
+.upgrade-card:hover::before,
+.mutation-card:hover::before,
+.kingdom-card:hover::before,
+.companion-card:hover::before,
+.spell-card:hover::before,
+.evolution-card:hover::before,
+.business-card:hover::before,
+.war-card:hover::before,
+.quest-card:hover::before {
+    transform: translateX(100%);
+}
+
+.upgrade-card:hover,
+.mutation-card:hover,
+.kingdom-card:hover,
+.companion-card:hover,
+.spell-card:hover,
+.evolution-card:hover,
+.business-card:hover,
+.war-card:hover,
+.quest-card:hover {
+    box-shadow: 0 0 10px var(--neon-blue),
+                0 0 20px var(--neon-blue);
+    transform: translateY(-5px);
+}
+
+.upgrade-card h3,
+.mutation-card h3,
+.kingdom-card h3,
+.companion-card h3,
+.spell-card h3,
+.evolution-card h3,
+.business-card h3,
+.war-card h3,
+.quest-card h3 {
+    color: var(--neon-pink);
+    margin: 0 0 10px 0;
+    text-shadow: 0 0 5px var(--neon-pink);
+}
+
+.upgrade-card p,
+.mutation-card p,
+.kingdom-card p,
+.companion-card p,
+.spell-card p,
+.evolution-card p,
+.business-card p,
+.war-card p,
+.quest-card p {
+    margin: 5px 0;
+    color: var(--neon-blue);
+}
+
+/* Кнопки */
+.upgrade-btn,
+.activate-companion-btn,
+.cast-spell-btn,
+.activate-evolution-btn,
+.upgrade-business-btn,
+.withdraw-savings-btn,
+.start-war-btn {
+    background: transparent;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7em;
+    margin-top: 10px;
+}
+
+.upgrade-btn:hover,
+.activate-companion-btn:hover,
+.cast-spell-btn:hover,
+.activate-evolution-btn:hover,
+.upgrade-business-btn:hover,
+.withdraw-savings-btn:hover,
+.start-war-btn:hover {
+    background: var(--neon-green);
+    color: var(--black);
+    box-shadow: 0 0 10px var(--neon-green),
+                0 0 20px var(--neon-green);
+}
+
+.upgrade-btn:disabled,
+.activate-companion-btn:disabled,
+.cast-spell-btn:disabled,
+.activate-evolution-btn:disabled,
+.upgrade-business-btn:disabled,
+.withdraw-savings-btn:disabled,
+.start-war-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #666;
+    color: #666;
+}
+
+/* Прогресс-бар */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--neon-pink);
+    border-radius: 5px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: var(--neon-pink);
+    box-shadow: 0 0 10px var(--neon-pink);
+    transition: width 0.3s ease;
+}
+
+/* Активные карточки */
+.active {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 10px var(--neon-green),
+                0 0 20px var(--neon-green);
+}
+
+.completed {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink);
+}
+
+/* Анимация клика */
+@keyframes clickWave {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+.cat-image:active {
+    transform: scale(0.95);
+}
+
+.cat-image:active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    animation: clickWave 0.5s ease-out;
+    pointer-events: none;
+}
+
+.achievement-notification,
+.event-notification,
+.mutation-notification,
+.quest-notification,
+.war-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--neon-pink);
+    border-radius: 5px;
+    padding: 15px;
+    color: var(--neon-pink);
+    animation: slideIn 0.5s ease-out;
+    z-index: 1000;
+    box-shadow: 0 0 10px var(--neon-pink);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .start-screen h1 {
+        font-size: 2rem;
+    }
+    
+    .counter {
+        font-size: 2em;
+    }
+    
+    .cat-image {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .tab-btn {
+        font-size: 0.7em;
+        padding: 8px 15px;
+    }
+}
